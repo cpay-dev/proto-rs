@@ -1,0 +1,11 @@
+[package]
+name = "cpay-proto"
+version = "1.0.1"
+edition = "2024"
+repository = "https://github.com/cpay-dev/proto-rs"
+homepage = "https://github.com/cpay-dev/proto-rs"
+
+[dependencies]
+prost = "=0.14.1"
+tonic = "=0.14.2"
+tonic-prost = "=0.14.2"

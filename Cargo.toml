@@ -1,0 +1,10 @@
+[workspace]
+members = [
+    "crates/proto-build",
+    "crates/proto",
+]
+resolver = "2"
+
+[profile.release]
+strip = "symbols"
+lto = "fat"
