@@ -10,9 +10,4 @@ pub mod cpay {
             }
         }
     }
-    pub mod blockchain {
-        pub mod v1 {
-            include!("cpay.blockchain.v1.rs");
-        }
-    }
 }
