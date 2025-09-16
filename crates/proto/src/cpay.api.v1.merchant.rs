@@ -8,7 +8,7 @@ pub struct ListChainsResponse {
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ListAssetsRequest {
-    #[prost(enumeration = "super::super::super::blockchain::v1::Chain", tag = "1")]
+    #[prost(enumeration = "super::blockchain::ChainId", tag = "1")]
     pub chain: i32,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
