@@ -5,6 +5,9 @@ pub mod cpay {
             pub mod blockchain {
                 include!("cpay.api.v1.blockchain.rs");
             }
+            pub mod kms {
+                include!("cpay.api.v1.kms.rs");
+            }
             pub mod merchant {
                 include!("cpay.api.v1.merchant.rs");
             }
