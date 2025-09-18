@@ -15,9 +15,11 @@ pub struct WrapKeyResponse {
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UnwrapKeyRequest {
-    #[prost(bytes = "vec", tag = "1")]
-    pub data: ::prost::alloc::vec::Vec<u8>,
+    #[prost(uint32, tag = "1")]
+    pub version: u32,
     #[prost(bytes = "vec", tag = "2")]
+    pub data: ::prost::alloc::vec::Vec<u8>,
+    #[prost(bytes = "vec", tag = "3")]
     pub transit_nonce: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -29,15 +31,17 @@ pub struct UnwrapKeyResponse {
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RewrapKeyRequest {
-    #[prost(bytes = "vec", tag = "1")]
-    pub data: ::prost::alloc::vec::Vec<u8>,
+    #[prost(uint32, tag = "1")]
+    pub old_version: u32,
     #[prost(bytes = "vec", tag = "2")]
+    pub data: ::prost::alloc::vec::Vec<u8>,
+    #[prost(bytes = "vec", tag = "3")]
     pub transit_nonce: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RewrapKeyResponse {
     #[prost(uint32, tag = "1")]
-    pub version: u32,
+    pub new_version: u32,
     #[prost(string, tag = "2")]
     pub encrypted_data: ::prost::alloc::string::String,
 }
