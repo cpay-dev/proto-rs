@@ -24,9 +24,7 @@ pub struct UnwrapKeyRequest {
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UnwrapKeyResponse {
-    #[prost(uint32, tag = "1")]
-    pub version: u32,
-    #[prost(string, tag = "2")]
+    #[prost(string, tag = "1")]
     pub encrypted_data: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
