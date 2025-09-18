@@ -10,8 +10,8 @@ pub struct WrapKeyRequest {
 pub struct WrapKeyResponse {
     #[prost(uint32, tag = "1")]
     pub version: u32,
-    #[prost(string, tag = "2")]
-    pub encrypted_data: ::prost::alloc::string::String,
+    #[prost(bytes = "vec", tag = "2")]
+    pub encrypted_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UnwrapKeyRequest {
@@ -24,8 +24,8 @@ pub struct UnwrapKeyRequest {
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UnwrapKeyResponse {
-    #[prost(string, tag = "1")]
-    pub encrypted_data: ::prost::alloc::string::String,
+    #[prost(bytes = "vec", tag = "1")]
+    pub decrypted_data: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RewrapKeyRequest {
@@ -40,8 +40,8 @@ pub struct RewrapKeyRequest {
 pub struct RewrapKeyResponse {
     #[prost(uint32, tag = "1")]
     pub new_version: u32,
-    #[prost(string, tag = "2")]
-    pub encrypted_data: ::prost::alloc::string::String,
+    #[prost(bytes = "vec", tag = "2")]
+    pub encrypted_data: ::prost::alloc::vec::Vec<u8>,
 }
 /// Generated client implementations.
 pub mod key_management_service_client {
