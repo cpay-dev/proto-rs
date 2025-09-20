@@ -11,6 +11,9 @@ pub mod cpay {
             pub mod merchant {
                 include!("cpay.api.v1.merchant.rs");
             }
+            pub mod wallet {
+                include!("cpay.api.v1.wallet.rs");
+            }
         }
     }
 }
