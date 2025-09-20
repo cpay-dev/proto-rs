@@ -4,7 +4,7 @@ pub struct WrapKeyRequest {
     #[prost(bytes = "vec", tag = "1")]
     pub data: ::prost::alloc::vec::Vec<u8>,
     #[prost(bytes = "vec", tag = "2")]
-    pub transit_nonce: ::prost::alloc::vec::Vec<u8>,
+    pub transit_key: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct WrapKeyResponse {
@@ -20,7 +20,7 @@ pub struct UnwrapKeyRequest {
     #[prost(bytes = "vec", tag = "2")]
     pub data: ::prost::alloc::vec::Vec<u8>,
     #[prost(bytes = "vec", tag = "3")]
-    pub transit_nonce: ::prost::alloc::vec::Vec<u8>,
+    pub transit_key: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct UnwrapKeyResponse {
@@ -34,7 +34,7 @@ pub struct RewrapKeyRequest {
     #[prost(bytes = "vec", tag = "2")]
     pub data: ::prost::alloc::vec::Vec<u8>,
     #[prost(bytes = "vec", tag = "3")]
-    pub transit_nonce: ::prost::alloc::vec::Vec<u8>,
+    pub transit_key: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RewrapKeyResponse {
