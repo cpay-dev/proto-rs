@@ -10,8 +10,8 @@ pub struct CreateWalletRequest {
 pub struct CreateWalletResponse {
     #[prost(uint32, tag = "1")]
     pub kek_version: u32,
-    #[prost(string, tag = "2")]
-    pub encrypted_private_key: ::prost::alloc::string::String,
+    #[prost(bytes = "vec", tag = "2")]
+    pub encrypted_private_key: ::prost::alloc::vec::Vec<u8>,
     #[prost(string, tag = "3")]
     pub public_key: ::prost::alloc::string::String,
 }
