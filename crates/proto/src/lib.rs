@@ -16,4 +16,11 @@ pub mod cpay {
             }
         }
     }
+    pub mod blockchain {
+        pub mod v1 {
+            pub mod indexer {
+                include!("cpay.blockchain.v1.indexer.rs");
+            }
+        }
+    }
 }
