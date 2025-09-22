@@ -12,6 +12,8 @@ fn main() {
         "api/v1/kms/service.proto",
         "api/v1/merchant/service.proto",
         "api/v1/wallet/service.proto",
+        // blockchain/v1
+        "blockchain/v1/indexer/tx.proto",
       ],
       &[&std::env::var("PROTO_SRC_DIR").expect("PROTO_SRC_DIR environment variable must be set")],
     )
