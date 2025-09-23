@@ -29,9 +29,10 @@ impl Chain {
 #[repr(i32)]
 pub enum ConfirmationLevel {
     Unspecified = 0,
-    Pending = 1,
-    Safe = 2,
-    Finalized = 3,
+    Unknown = 1,
+    Pending = 2,
+    Safe = 3,
+    Finalized = 4,
 }
 impl ConfirmationLevel {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -41,6 +42,7 @@ impl ConfirmationLevel {
     pub fn as_str_name(&self) -> &'static str {
         match self {
             Self::Unspecified => "CONFIRMATION_LEVEL_UNSPECIFIED",
+            Self::Unknown => "CONFIRMATION_LEVEL_UNKNOWN",
             Self::Pending => "CONFIRMATION_LEVEL_PENDING",
             Self::Safe => "CONFIRMATION_LEVEL_SAFE",
             Self::Finalized => "CONFIRMATION_LEVEL_FINALIZED",
@@ -50,6 +52,7 @@ impl ConfirmationLevel {
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
             "CONFIRMATION_LEVEL_UNSPECIFIED" => Some(Self::Unspecified),
+            "CONFIRMATION_LEVEL_UNKNOWN" => Some(Self::Unknown),
             "CONFIRMATION_LEVEL_PENDING" => Some(Self::Pending),
             "CONFIRMATION_LEVEL_SAFE" => Some(Self::Safe),
             "CONFIRMATION_LEVEL_FINALIZED" => Some(Self::Finalized),
