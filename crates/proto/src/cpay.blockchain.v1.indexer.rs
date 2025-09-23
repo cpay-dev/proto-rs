@@ -14,9 +14,16 @@ pub struct Block {
 pub mod block {
     #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
     pub enum Transactions {
-        #[prost(bytes, tag = "4")]
-        SerializedTxs(::prost::alloc::vec::Vec<u8>),
+        #[prost(message, tag = "4")]
+        EvmTransactions(super::EvmTransactions),
     }
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct EvmTransactions {
+    #[prost(bytes = "vec", tag = "1")]
+    pub serialized_txs: ::prost::alloc::vec::Vec<u8>,
+    #[prost(bytes = "vec", tag = "2")]
+    pub serialized_receipts: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
