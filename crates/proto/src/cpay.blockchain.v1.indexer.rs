@@ -112,16 +112,18 @@ pub struct ParsedTransfer {
     pub from: ::prost::alloc::string::String,
     #[prost(string, tag = "4")]
     pub to: ::prost::alloc::string::String,
-    #[prost(oneof = "parsed_transfer::Kind", tags = "5, 6")]
+    #[prost(uint64, tag = "5")]
+    pub index: u64,
+    #[prost(oneof = "parsed_transfer::Kind", tags = "6, 7")]
     pub kind: ::core::option::Option<parsed_transfer::Kind>,
 }
 /// Nested message and enum types in `ParsedTransfer`.
 pub mod parsed_transfer {
     #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
     pub enum Kind {
-        #[prost(bool, tag = "5")]
+        #[prost(bool, tag = "6")]
         Native(bool),
-        #[prost(string, tag = "6")]
+        #[prost(string, tag = "7")]
         Contract(::prost::alloc::string::String),
     }
 }
