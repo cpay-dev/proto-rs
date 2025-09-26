@@ -63,18 +63,20 @@ pub struct Block {
     pub chain: i32,
     #[prost(enumeration = "ConfirmationLevel", tag = "2")]
     pub confirmation_level: i32,
-    #[prost(uint64, tag = "3")]
-    pub block_number: u64,
+    #[prost(string, tag = "3")]
+    pub block_hash: ::prost::alloc::string::String,
     #[prost(uint64, tag = "4")]
+    pub block_number: u64,
+    #[prost(uint64, tag = "5")]
     pub block_timestamp: u64,
-    #[prost(oneof = "block::Transactions", tags = "5")]
+    #[prost(oneof = "block::Transactions", tags = "6")]
     pub transactions: ::core::option::Option<block::Transactions>,
 }
 /// Nested message and enum types in `Block`.
 pub mod block {
     #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
     pub enum Transactions {
-        #[prost(message, tag = "5")]
+        #[prost(message, tag = "6")]
         EvmTransactions(super::EvmTransactions),
     }
 }
@@ -91,11 +93,13 @@ pub struct ParsedBlock {
     pub chain: i32,
     #[prost(enumeration = "ConfirmationLevel", tag = "2")]
     pub confirmation_level: i32,
-    #[prost(uint64, tag = "3")]
-    pub block_number: u64,
+    #[prost(string, tag = "3")]
+    pub block_hash: ::prost::alloc::string::String,
     #[prost(uint64, tag = "4")]
+    pub block_number: u64,
+    #[prost(uint64, tag = "5")]
     pub block_timestamp: u64,
-    #[prost(message, repeated, tag = "5")]
+    #[prost(message, repeated, tag = "6")]
     pub transfers: ::prost::alloc::vec::Vec<ParsedTransfer>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
