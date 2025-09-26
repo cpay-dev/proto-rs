@@ -52,3 +52,35 @@ impl Chain {
         }
     }
 }
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum ConfirmationLevel {
+    Unspecified = 0,
+    Pending = 1,
+    Safe = 2,
+    Finalized = 3,
+}
+impl ConfirmationLevel {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "CONFIRMATION_LEVEL_UNSPECIFIED",
+            Self::Pending => "CONFIRMATION_LEVEL_PENDING",
+            Self::Safe => "CONFIRMATION_LEVEL_SAFE",
+            Self::Finalized => "CONFIRMATION_LEVEL_FINALIZED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "CONFIRMATION_LEVEL_UNSPECIFIED" => Some(Self::Unspecified),
+            "CONFIRMATION_LEVEL_PENDING" => Some(Self::Pending),
+            "CONFIRMATION_LEVEL_SAFE" => Some(Self::Safe),
+            "CONFIRMATION_LEVEL_FINALIZED" => Some(Self::Finalized),
+            _ => None,
+        }
+    }
+}
