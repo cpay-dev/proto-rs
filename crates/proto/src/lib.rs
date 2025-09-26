@@ -2,9 +2,6 @@
 pub mod cpay {
     pub mod api {
         pub mod v1 {
-            pub mod blockchain {
-                include!("cpay.api.v1.blockchain.rs");
-            }
             pub mod kms {
                 include!("cpay.api.v1.kms.rs");
             }
@@ -18,6 +15,7 @@ pub mod cpay {
     }
     pub mod blockchain {
         pub mod v1 {
+            include!("cpay.blockchain.v1.rs");
             pub mod indexer {
                 include!("cpay.blockchain.v1.indexer.rs");
             }
