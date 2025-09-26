@@ -6,16 +6,21 @@ fn main() {
     .compile_protos(
       &[
         // api/v1
-        "api/v1/blockchain/asset.proto",
-        "api/v1/blockchain/chain.proto",
-        "api/v1/blockchain/chain_id.proto",
         "api/v1/kms/service.proto",
+
+        "api/v1/merchant/asset.proto",
+        "api/v1/merchant/chain.proto",
         "api/v1/merchant/service.proto",
+        
         "api/v1/wallet/service.proto",
+
         // blockchain/v1
         "blockchain/v1/indexer/block.proto",
         "blockchain/v1/indexer/parsed_block.proto",
         "blockchain/v1/indexer/types.proto",
+        
+        "blockchain/v1/chain.proto",
+        "blockchain/v1/service.proto",
       ],
       &[&std::env::var("PROTO_SRC_DIR").expect("PROTO_SRC_DIR environment variable must be set")],
     )
