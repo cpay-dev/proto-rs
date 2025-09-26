@@ -20,7 +20,6 @@ fn main() {
         "blockchain/v1/indexer/types.proto",
         
         "blockchain/v1/chain.proto",
-        "blockchain/v1/service.proto",
       ],
       &[&std::env::var("PROTO_SRC_DIR").expect("PROTO_SRC_DIR environment variable must be set")],
     )
