@@ -19,6 +19,16 @@ pub struct AssetMetadata {
     #[prost(uint32, tag = "2")]
     pub decimals: u32,
 }
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListAssetsRequest {
+    #[prost(enumeration = "super::super::super::blockchain::v1::Chain", tag = "1")]
+    pub chain_id: i32,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListAssetsResponse {
+    #[prost(message, repeated, tag = "1")]
+    pub assets: ::prost::alloc::vec::Vec<Asset>,
+}
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Chain {
     #[prost(enumeration = "super::super::super::blockchain::v1::Chain", tag = "1")]
@@ -33,15 +43,78 @@ pub struct ListChainsResponse {
     #[prost(message, repeated, tag = "1")]
     pub chains: ::prost::alloc::vec::Vec<Chain>,
 }
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ListAssetsRequest {
-    #[prost(enumeration = "super::super::super::blockchain::v1::Chain", tag = "1")]
-    pub chain_id: i32,
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PaymentIntent {
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(enumeration = "PaymentIntentStatus", tag = "2")]
+    pub status: i32,
+    #[prost(string, tag = "3")]
+    pub asset_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub amount_usd: ::prost::alloc::string::String,
+    #[prost(string, tag = "5")]
+    pub amount_asset: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "6")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(message, optional, tag = "7")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ListAssetsResponse {
-    #[prost(message, repeated, tag = "1")]
-    pub assets: ::prost::alloc::vec::Vec<Asset>,
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreatePaymentIntentRequest {
+    #[prost(string, tag = "1")]
+    pub asset_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub amount: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreatePaymentIntentResponse {
+    #[prost(message, optional, tag = "1")]
+    pub payment_intent: ::core::option::Option<PaymentIntent>,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum PaymentIntentStatus {
+    Unspecified = 0,
+    AwaitingPayment = 1,
+    Paid = 2,
+    Expired = 3,
+    AmlCheckPending = 4,
+    AmlCheckFailed = 5,
+    RefundPending = 6,
+    Refunded = 7,
+}
+impl PaymentIntentStatus {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Unspecified => "PAYMENT_INTENT_STATUS_UNSPECIFIED",
+            Self::AwaitingPayment => "PAYMENT_INTENT_STATUS_AWAITING_PAYMENT",
+            Self::Paid => "PAYMENT_INTENT_STATUS_PAID",
+            Self::Expired => "PAYMENT_INTENT_STATUS_EXPIRED",
+            Self::AmlCheckPending => "PAYMENT_INTENT_STATUS_AML_CHECK_PENDING",
+            Self::AmlCheckFailed => "PAYMENT_INTENT_STATUS_AML_CHECK_FAILED",
+            Self::RefundPending => "PAYMENT_INTENT_STATUS_REFUND_PENDING",
+            Self::Refunded => "PAYMENT_INTENT_STATUS_REFUNDED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "PAYMENT_INTENT_STATUS_UNSPECIFIED" => Some(Self::Unspecified),
+            "PAYMENT_INTENT_STATUS_AWAITING_PAYMENT" => Some(Self::AwaitingPayment),
+            "PAYMENT_INTENT_STATUS_PAID" => Some(Self::Paid),
+            "PAYMENT_INTENT_STATUS_EXPIRED" => Some(Self::Expired),
+            "PAYMENT_INTENT_STATUS_AML_CHECK_PENDING" => Some(Self::AmlCheckPending),
+            "PAYMENT_INTENT_STATUS_AML_CHECK_FAILED" => Some(Self::AmlCheckFailed),
+            "PAYMENT_INTENT_STATUS_REFUND_PENDING" => Some(Self::RefundPending),
+            "PAYMENT_INTENT_STATUS_REFUNDED" => Some(Self::Refunded),
+            _ => None,
+        }
+    }
 }
 /// Generated client implementations.
 pub mod merchant_service_client {
@@ -186,6 +259,35 @@ pub mod merchant_service_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        pub async fn create_payment_intent(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CreatePaymentIntentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreatePaymentIntentResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/cpay.api.v1.merchant.MerchantService/CreatePaymentIntent",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "cpay.api.v1.merchant.MerchantService",
+                        "CreatePaymentIntent",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -213,6 +315,13 @@ pub mod merchant_service_server {
             request: tonic::Request<super::ListAssetsRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ListAssetsResponse>,
+            tonic::Status,
+        >;
+        async fn create_payment_intent(
+            &self,
+            request: tonic::Request<super::CreatePaymentIntentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreatePaymentIntentResponse>,
             tonic::Status,
         >;
     }
@@ -367,6 +476,55 @@ pub mod merchant_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ListAssetsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/cpay.api.v1.merchant.MerchantService/CreatePaymentIntent" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreatePaymentIntentSvc<T: MerchantService>(pub Arc<T>);
+                    impl<
+                        T: MerchantService,
+                    > tonic::server::UnaryService<super::CreatePaymentIntentRequest>
+                    for CreatePaymentIntentSvc<T> {
+                        type Response = super::CreatePaymentIntentResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CreatePaymentIntentRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as MerchantService>::create_payment_intent(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CreatePaymentIntentSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
