@@ -18,16 +18,8 @@ pub struct AssetMetadata {
     pub address: ::prost::alloc::string::String,
     #[prost(uint32, tag = "2")]
     pub decimals: u32,
-}
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ListAssetsRequest {
-    #[prost(enumeration = "super::super::super::blockchain::v1::Chain", tag = "1")]
-    pub chain_id: i32,
-}
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ListAssetsResponse {
-    #[prost(message, repeated, tag = "1")]
-    pub assets: ::prost::alloc::vec::Vec<Asset>,
+    #[prost(bool, tag = "3")]
+    pub is_stable: bool,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Chain {
@@ -35,13 +27,6 @@ pub struct Chain {
     pub id: i32,
     #[prost(string, tag = "2")]
     pub name: ::prost::alloc::string::String,
-}
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ListChainsRequest {}
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ListChainsResponse {
-    #[prost(message, repeated, tag = "1")]
-    pub chains: ::prost::alloc::vec::Vec<Chain>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct PaymentIntent {
@@ -59,28 +44,6 @@ pub struct PaymentIntent {
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "7")]
     pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
-}
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct CreatePaymentIntentRequest {
-    #[prost(string, tag = "1")]
-    pub asset_id: ::prost::alloc::string::String,
-    #[prost(oneof = "create_payment_intent_request::Amount", tags = "2, 3")]
-    pub amount: ::core::option::Option<create_payment_intent_request::Amount>,
-}
-/// Nested message and enum types in `CreatePaymentIntentRequest`.
-pub mod create_payment_intent_request {
-    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
-    pub enum Amount {
-        #[prost(string, tag = "2")]
-        AmountUsd(::prost::alloc::string::String),
-        #[prost(string, tag = "3")]
-        AmountAsset(::prost::alloc::string::String),
-    }
-}
-#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct CreatePaymentIntentResponse {
-    #[prost(message, optional, tag = "1")]
-    pub payment_intent: ::core::option::Option<PaymentIntent>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -126,8 +89,28 @@ impl PaymentIntentStatus {
         }
     }
 }
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListAssetsRequest {
+    #[prost(enumeration = "super::super::super::blockchain::v1::Chain", tag = "1")]
+    pub chain_id: i32,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListAssetsResponse {
+    #[prost(message, repeated, tag = "1")]
+    pub assets: ::prost::alloc::vec::Vec<Asset>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetAssetPriceRequest {
+    #[prost(string, tag = "1")]
+    pub asset_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetAssetPriceResponse {
+    #[prost(string, tag = "1")]
+    pub price: ::prost::alloc::string::String,
+}
 /// Generated client implementations.
-pub mod merchant_service_client {
+pub mod asset_service_client {
     #![allow(
         unused_variables,
         dead_code,
@@ -138,10 +121,10 @@ pub mod merchant_service_client {
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct MerchantServiceClient<T> {
+    pub struct AssetServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl MerchantServiceClient<tonic::transport::Channel> {
+    impl AssetServiceClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -152,7 +135,7 @@ pub mod merchant_service_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> MerchantServiceClient<T>
+    impl<T> AssetServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
@@ -170,7 +153,7 @@ pub mod merchant_service_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> MerchantServiceClient<InterceptedService<T, F>>
+        ) -> AssetServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -184,7 +167,7 @@ pub mod merchant_service_client {
                 http::Request<tonic::body::Body>,
             >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
         {
-            MerchantServiceClient::new(InterceptedService::new(inner, interceptor))
+            AssetServiceClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -217,32 +200,6 @@ pub mod merchant_service_client {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
         }
-        pub async fn list_chains(
-            &mut self,
-            request: impl tonic::IntoRequest<super::ListChainsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ListChainsResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/cpay.api.v1.merchant.MerchantService/ListChains",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("cpay.api.v1.merchant.MerchantService", "ListChains"),
-                );
-            self.inner.unary(req, path, codec).await
-        }
         pub async fn list_assets(
             &mut self,
             request: impl tonic::IntoRequest<super::ListAssetsRequest>,
@@ -260,20 +217,20 @@ pub mod merchant_service_client {
                 })?;
             let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/cpay.api.v1.merchant.MerchantService/ListAssets",
+                "/cpay.api.v1.merchant.AssetService/ListAssets",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
-                    GrpcMethod::new("cpay.api.v1.merchant.MerchantService", "ListAssets"),
+                    GrpcMethod::new("cpay.api.v1.merchant.AssetService", "ListAssets"),
                 );
             self.inner.unary(req, path, codec).await
         }
-        pub async fn create_payment_intent(
+        pub async fn get_asset_price(
             &mut self,
-            request: impl tonic::IntoRequest<super::CreatePaymentIntentRequest>,
+            request: impl tonic::IntoRequest<super::GetAssetPriceRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::CreatePaymentIntentResponse>,
+            tonic::Response<super::GetAssetPriceResponse>,
             tonic::Status,
         > {
             self.inner
@@ -286,22 +243,19 @@ pub mod merchant_service_client {
                 })?;
             let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/cpay.api.v1.merchant.MerchantService/CreatePaymentIntent",
+                "/cpay.api.v1.merchant.AssetService/GetAssetPrice",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
-                    GrpcMethod::new(
-                        "cpay.api.v1.merchant.MerchantService",
-                        "CreatePaymentIntent",
-                    ),
+                    GrpcMethod::new("cpay.api.v1.merchant.AssetService", "GetAssetPrice"),
                 );
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod merchant_service_server {
+pub mod asset_service_server {
     #![allow(
         unused_variables,
         dead_code,
@@ -310,16 +264,9 @@ pub mod merchant_service_server {
         clippy::let_unit_value,
     )]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with MerchantServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with AssetServiceServer.
     #[async_trait]
-    pub trait MerchantService: std::marker::Send + std::marker::Sync + 'static {
-        async fn list_chains(
-            &self,
-            request: tonic::Request<super::ListChainsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ListChainsResponse>,
-            tonic::Status,
-        >;
+    pub trait AssetService: std::marker::Send + std::marker::Sync + 'static {
         async fn list_assets(
             &self,
             request: tonic::Request<super::ListAssetsRequest>,
@@ -327,23 +274,23 @@ pub mod merchant_service_server {
             tonic::Response<super::ListAssetsResponse>,
             tonic::Status,
         >;
-        async fn create_payment_intent(
+        async fn get_asset_price(
             &self,
-            request: tonic::Request<super::CreatePaymentIntentRequest>,
+            request: tonic::Request<super::GetAssetPriceRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::CreatePaymentIntentResponse>,
+            tonic::Response<super::GetAssetPriceResponse>,
             tonic::Status,
         >;
     }
     #[derive(Debug)]
-    pub struct MerchantServiceServer<T> {
+    pub struct AssetServiceServer<T> {
         inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    impl<T> MerchantServiceServer<T> {
+    impl<T> AssetServiceServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -394,9 +341,9 @@ pub mod merchant_service_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for MerchantServiceServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for AssetServiceServer<T>
     where
-        T: MerchantService,
+        T: AssetService,
         B: Body + std::marker::Send + 'static,
         B::Error: Into<StdError> + std::marker::Send + 'static,
     {
@@ -411,56 +358,11 @@ pub mod merchant_service_server {
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             match req.uri().path() {
-                "/cpay.api.v1.merchant.MerchantService/ListChains" => {
+                "/cpay.api.v1.merchant.AssetService/ListAssets" => {
                     #[allow(non_camel_case_types)]
-                    struct ListChainsSvc<T: MerchantService>(pub Arc<T>);
+                    struct ListAssetsSvc<T: AssetService>(pub Arc<T>);
                     impl<
-                        T: MerchantService,
-                    > tonic::server::UnaryService<super::ListChainsRequest>
-                    for ListChainsSvc<T> {
-                        type Response = super::ListChainsResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<super::ListChainsRequest>,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as MerchantService>::list_chains(&inner, request).await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let method = ListChainsSvc(inner);
-                        let codec = tonic_prost::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/cpay.api.v1.merchant.MerchantService/ListAssets" => {
-                    #[allow(non_camel_case_types)]
-                    struct ListAssetsSvc<T: MerchantService>(pub Arc<T>);
-                    impl<
-                        T: MerchantService,
+                        T: AssetService,
                     > tonic::server::UnaryService<super::ListAssetsRequest>
                     for ListAssetsSvc<T> {
                         type Response = super::ListAssetsResponse;
@@ -474,7 +376,7 @@ pub mod merchant_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as MerchantService>::list_assets(&inner, request).await
+                                <T as AssetService>::list_assets(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -501,11 +403,646 @@ pub mod merchant_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/cpay.api.v1.merchant.MerchantService/CreatePaymentIntent" => {
+                "/cpay.api.v1.merchant.AssetService/GetAssetPrice" => {
                     #[allow(non_camel_case_types)]
-                    struct CreatePaymentIntentSvc<T: MerchantService>(pub Arc<T>);
+                    struct GetAssetPriceSvc<T: AssetService>(pub Arc<T>);
                     impl<
-                        T: MerchantService,
+                        T: AssetService,
+                    > tonic::server::UnaryService<super::GetAssetPriceRequest>
+                    for GetAssetPriceSvc<T> {
+                        type Response = super::GetAssetPriceResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetAssetPriceRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AssetService>::get_asset_price(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetAssetPriceSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for AssetServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "cpay.api.v1.merchant.AssetService";
+    impl<T> tonic::server::NamedService for AssetServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListChainsRequest {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListChainsResponse {
+    #[prost(message, repeated, tag = "1")]
+    pub chains: ::prost::alloc::vec::Vec<Chain>,
+}
+/// Generated client implementations.
+pub mod chain_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    #[derive(Debug, Clone)]
+    pub struct ChainServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl ChainServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> ChainServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> ChainServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            ChainServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        pub async fn list_chains(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListChainsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListChainsResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/cpay.api.v1.merchant.ChainService/ListChains",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("cpay.api.v1.merchant.ChainService", "ListChains"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod chain_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with ChainServiceServer.
+    #[async_trait]
+    pub trait ChainService: std::marker::Send + std::marker::Sync + 'static {
+        async fn list_chains(
+            &self,
+            request: tonic::Request<super::ListChainsRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListChainsResponse>,
+            tonic::Status,
+        >;
+    }
+    #[derive(Debug)]
+    pub struct ChainServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> ChainServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for ChainServiceServer<T>
+    where
+        T: ChainService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/cpay.api.v1.merchant.ChainService/ListChains" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListChainsSvc<T: ChainService>(pub Arc<T>);
+                    impl<
+                        T: ChainService,
+                    > tonic::server::UnaryService<super::ListChainsRequest>
+                    for ListChainsSvc<T> {
+                        type Response = super::ListChainsResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListChainsRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as ChainService>::list_chains(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ListChainsSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                _ => {
+                    Box::pin(async move {
+                        let mut response = http::Response::new(
+                            tonic::body::Body::default(),
+                        );
+                        let headers = response.headers_mut();
+                        headers
+                            .insert(
+                                tonic::Status::GRPC_STATUS,
+                                (tonic::Code::Unimplemented as i32).into(),
+                            );
+                        headers
+                            .insert(
+                                http::header::CONTENT_TYPE,
+                                tonic::metadata::GRPC_CONTENT_TYPE,
+                            );
+                        Ok(response)
+                    })
+                }
+            }
+        }
+    }
+    impl<T> Clone for ChainServiceServer<T> {
+        fn clone(&self) -> Self {
+            let inner = self.inner.clone();
+            Self {
+                inner,
+                accept_compression_encodings: self.accept_compression_encodings,
+                send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
+            }
+        }
+    }
+    /// Generated gRPC service name
+    pub const SERVICE_NAME: &str = "cpay.api.v1.merchant.ChainService";
+    impl<T> tonic::server::NamedService for ChainServiceServer<T> {
+        const NAME: &'static str = SERVICE_NAME;
+    }
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreatePaymentIntentRequest {
+    #[prost(string, tag = "1")]
+    pub asset_id: ::prost::alloc::string::String,
+    #[prost(oneof = "create_payment_intent_request::Amount", tags = "2, 3")]
+    pub amount: ::core::option::Option<create_payment_intent_request::Amount>,
+}
+/// Nested message and enum types in `CreatePaymentIntentRequest`.
+pub mod create_payment_intent_request {
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Amount {
+        #[prost(string, tag = "2")]
+        AmountUsd(::prost::alloc::string::String),
+        #[prost(string, tag = "3")]
+        AmountAsset(::prost::alloc::string::String),
+    }
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct CreatePaymentIntentResponse {
+    #[prost(message, optional, tag = "1")]
+    pub payment_intent: ::core::option::Option<PaymentIntent>,
+}
+/// Generated client implementations.
+pub mod payment_intent_service_client {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
+    #[derive(Debug, Clone)]
+    pub struct PaymentIntentServiceClient<T> {
+        inner: tonic::client::Grpc<T>,
+    }
+    impl PaymentIntentServiceClient<tonic::transport::Channel> {
+        /// Attempt to create a new client by connecting to a given endpoint.
+        pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
+        where
+            D: TryInto<tonic::transport::Endpoint>,
+            D::Error: Into<StdError>,
+        {
+            let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
+            Ok(Self::new(conn))
+        }
+    }
+    impl<T> PaymentIntentServiceClient<T>
+    where
+        T: tonic::client::GrpcService<tonic::body::Body>,
+        T::Error: Into<StdError>,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+    {
+        pub fn new(inner: T) -> Self {
+            let inner = tonic::client::Grpc::new(inner);
+            Self { inner }
+        }
+        pub fn with_origin(inner: T, origin: Uri) -> Self {
+            let inner = tonic::client::Grpc::with_origin(inner, origin);
+            Self { inner }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> PaymentIntentServiceClient<InterceptedService<T, F>>
+        where
+            F: tonic::service::Interceptor,
+            T::ResponseBody: Default,
+            T: tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+                Response = http::Response<
+                    <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                >,
+            >,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::Body>,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+        {
+            PaymentIntentServiceClient::new(InterceptedService::new(inner, interceptor))
+        }
+        /// Compress requests with the given encoding.
+        ///
+        /// This requires the server to support it otherwise it might respond with an
+        /// error.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.send_compressed(encoding);
+            self
+        }
+        /// Enable decompressing responses.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.inner = self.inner.accept_compressed(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
+        pub async fn create_payment_intent(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CreatePaymentIntentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreatePaymentIntentResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/cpay.api.v1.merchant.PaymentIntentService/CreatePaymentIntent",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "cpay.api.v1.merchant.PaymentIntentService",
+                        "CreatePaymentIntent",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+    }
+}
+/// Generated server implementations.
+pub mod payment_intent_service_server {
+    #![allow(
+        unused_variables,
+        dead_code,
+        missing_docs,
+        clippy::wildcard_imports,
+        clippy::let_unit_value,
+    )]
+    use tonic::codegen::*;
+    /// Generated trait containing gRPC methods that should be implemented for use with PaymentIntentServiceServer.
+    #[async_trait]
+    pub trait PaymentIntentService: std::marker::Send + std::marker::Sync + 'static {
+        async fn create_payment_intent(
+            &self,
+            request: tonic::Request<super::CreatePaymentIntentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreatePaymentIntentResponse>,
+            tonic::Status,
+        >;
+    }
+    #[derive(Debug)]
+    pub struct PaymentIntentServiceServer<T> {
+        inner: Arc<T>,
+        accept_compression_encodings: EnabledCompressionEncodings,
+        send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
+    }
+    impl<T> PaymentIntentServiceServer<T> {
+        pub fn new(inner: T) -> Self {
+            Self::from_arc(Arc::new(inner))
+        }
+        pub fn from_arc(inner: Arc<T>) -> Self {
+            Self {
+                inner,
+                accept_compression_encodings: Default::default(),
+                send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
+            }
+        }
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
+        where
+            F: tonic::service::Interceptor,
+        {
+            InterceptedService::new(Self::new(inner), interceptor)
+        }
+        /// Enable decompressing requests with the given encoding.
+        #[must_use]
+        pub fn accept_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.accept_compression_encodings.enable(encoding);
+            self
+        }
+        /// Compress responses with the given encoding, if the client supports it.
+        #[must_use]
+        pub fn send_compressed(mut self, encoding: CompressionEncoding) -> Self {
+            self.send_compression_encodings.enable(encoding);
+            self
+        }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
+    }
+    impl<T, B> tonic::codegen::Service<http::Request<B>>
+    for PaymentIntentServiceServer<T>
+    where
+        T: PaymentIntentService,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
+    {
+        type Response = http::Response<tonic::body::Body>;
+        type Error = std::convert::Infallible;
+        type Future = BoxFuture<Self::Response, Self::Error>;
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
+            Poll::Ready(Ok(()))
+        }
+        fn call(&mut self, req: http::Request<B>) -> Self::Future {
+            match req.uri().path() {
+                "/cpay.api.v1.merchant.PaymentIntentService/CreatePaymentIntent" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreatePaymentIntentSvc<T: PaymentIntentService>(pub Arc<T>);
+                    impl<
+                        T: PaymentIntentService,
                     > tonic::server::UnaryService<super::CreatePaymentIntentRequest>
                     for CreatePaymentIntentSvc<T> {
                         type Response = super::CreatePaymentIntentResponse;
@@ -519,7 +1056,7 @@ pub mod merchant_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as MerchantService>::create_payment_intent(
+                                <T as PaymentIntentService>::create_payment_intent(
                                         &inner,
                                         request,
                                     )
@@ -572,7 +1109,7 @@ pub mod merchant_service_server {
             }
         }
     }
-    impl<T> Clone for MerchantServiceServer<T> {
+    impl<T> Clone for PaymentIntentServiceServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -585,8 +1122,8 @@ pub mod merchant_service_server {
         }
     }
     /// Generated gRPC service name
-    pub const SERVICE_NAME: &str = "cpay.api.v1.merchant.MerchantService";
-    impl<T> tonic::server::NamedService for MerchantServiceServer<T> {
+    pub const SERVICE_NAME: &str = "cpay.api.v1.merchant.PaymentIntentService";
+    impl<T> tonic::server::NamedService for PaymentIntentServiceServer<T> {
         const NAME: &'static str = SERVICE_NAME;
     }
 }
