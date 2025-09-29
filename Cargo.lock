@@ -138,6 +138,7 @@ name = "cpay-proto"
 version = "1.0.1"
 dependencies = [
  "prost",
+ "prost-types",
  "tonic",
  "tonic-prost",
 ]

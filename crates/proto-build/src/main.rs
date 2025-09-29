@@ -10,6 +10,7 @@ fn main() {
 
         "api/v1/merchant/asset.proto",
         "api/v1/merchant/chain.proto",
+        "api/v1/merchant/payment-intent.proto",
         "api/v1/merchant/service.proto",
         
         "api/v1/wallet/service.proto",
