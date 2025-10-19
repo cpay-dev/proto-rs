@@ -52,6 +52,19 @@ impl Chain {
         }
     }
 }
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct Block {
+    #[prost(enumeration = "Chain", tag = "1")]
+    pub chain: i32,
+    #[prost(enumeration = "ConfirmationLevel", tag = "2")]
+    pub confirmation_level: i32,
+    #[prost(string, tag = "3")]
+    pub block_hash: ::prost::alloc::string::String,
+    #[prost(uint64, tag = "4")]
+    pub block_number: u64,
+    #[prost(uint64, tag = "5")]
+    pub block_timestamp: u64,
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum ConfirmationLevel {

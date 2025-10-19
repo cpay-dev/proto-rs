@@ -27,6 +27,9 @@ pub mod cpay {
             pub mod indexer {
                 include!("cpay.blockchain.v1.indexer.rs");
             }
+            pub mod parser {
+                include!("cpay.blockchain.v1.parser.rs");
+            }
         }
     }
 }
