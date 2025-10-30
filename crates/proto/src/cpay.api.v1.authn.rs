@@ -59,9 +59,16 @@ pub struct InitAuthResponse {
 pub mod init_auth_response {
     #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
     pub enum Continuation {
-        #[prost(string, tag = "1")]
-        AuthUrl(::prost::alloc::string::String),
+        #[prost(message, tag = "1")]
+        Provider(super::ProviderContinuation),
     }
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ProviderContinuation {
+    #[prost(string, tag = "1")]
+    pub state: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub redirect_url: ::prost::alloc::string::String,
 }
 /// Generated client implementations.
 pub mod authn_service_client {
