@@ -1,0 +1,27 @@
+[workspace]
+members = [
+	"crates/proto-build",
+	"crates/proto"
+]
+resolver = "2"
+
+[workspace.package]
+version = "1.0.1"
+edition = "2024"
+rust-version = "1.90"
+publish = false
+
+[workspace.dependencies]
+prost = { version = "=0.14.1", default-features = false, features = ["std", "derive"] }
+prost-types = { version = "=0.14.1", default-features = false, features = ["std"] }
+tonic = { version = "=0.14.2", default-features = false, features = ["router", "transport", "codegen"] }
+tonic-prost = { version = "=0.14.2", default-features = false }
+tonic-prost-build = { version = "=0.14.2", default-features = false, features = ["transport", "cleanup-markdown"] }
+
+[profile.dev]
+debug = "line-tables-only"
+split-debuginfo = "unpacked"
+
+[profile.release]
+strip = "symbols"
+lto = "fat"
