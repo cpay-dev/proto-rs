@@ -70,6 +70,46 @@ pub struct ProviderContinuation {
     #[prost(string, tag = "2")]
     pub redirect_url: ::prost::alloc::string::String,
 }
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ContinueAuthRequest {
+    #[prost(oneof = "continue_auth_request::Method", tags = "1")]
+    pub method: ::core::option::Option<continue_auth_request::Method>,
+}
+/// Nested message and enum types in `ContinueAuthRequest`.
+pub mod continue_auth_request {
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Method {
+        #[prost(message, tag = "1")]
+        ProviderCallback(super::ProviderCallbackMethod),
+    }
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ProviderCallbackMethod {
+    #[prost(string, tag = "1")]
+    pub state: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub code: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ContinueAuthResponse {
+    #[prost(oneof = "continue_auth_response::Data", tags = "1")]
+    pub data: ::core::option::Option<continue_auth_response::Data>,
+}
+/// Nested message and enum types in `ContinueAuthResponse`.
+pub mod continue_auth_response {
+    #[derive(Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
+    pub enum Data {
+        #[prost(message, tag = "1")]
+        ProviderData(super::ProviderCallbackData),
+    }
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ProviderCallbackData {
+    #[prost(string, tag = "1")]
+    pub email: ::prost::alloc::string::String,
+    #[prost(bool, tag = "2")]
+    pub email_verified: bool,
+}
 /// Generated client implementations.
 pub mod authn_service_client {
     #![allow(
@@ -185,6 +225,32 @@ pub mod authn_service_client {
                 .insert(GrpcMethod::new("cpay.api.v1.authn.AuthnService", "InitAuth"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn continue_auth(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ContinueAuthRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ContinueAuthResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/cpay.api.v1.authn.AuthnService/ContinueAuth",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("cpay.api.v1.authn.AuthnService", "ContinueAuth"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -205,6 +271,13 @@ pub mod authn_service_server {
             request: tonic::Request<super::InitAuthRequest>,
         ) -> std::result::Result<
             tonic::Response<super::InitAuthResponse>,
+            tonic::Status,
+        >;
+        async fn continue_auth(
+            &self,
+            request: tonic::Request<super::ContinueAuthRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ContinueAuthResponse>,
             tonic::Status,
         >;
     }
@@ -314,6 +387,51 @@ pub mod authn_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = InitAuthSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/cpay.api.v1.authn.AuthnService/ContinueAuth" => {
+                    #[allow(non_camel_case_types)]
+                    struct ContinueAuthSvc<T: AuthnService>(pub Arc<T>);
+                    impl<
+                        T: AuthnService,
+                    > tonic::server::UnaryService<super::ContinueAuthRequest>
+                    for ContinueAuthSvc<T> {
+                        type Response = super::ContinueAuthResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ContinueAuthRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AuthnService>::continue_auth(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ContinueAuthSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
