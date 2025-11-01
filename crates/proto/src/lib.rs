@@ -5,6 +5,9 @@ pub mod cpay {
             pub mod authn {
                 include!("cpay.api.v1.authn.rs");
             }
+            pub mod user {
+                include!("cpay.api.v1.user.rs");
+            }
         }
     }
 }
